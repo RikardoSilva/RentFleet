@@ -1,0 +1,6 @@
+@RentFleet.Api_HostAddress = http://localhost:5250
+
+GET {{RentFleet.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
