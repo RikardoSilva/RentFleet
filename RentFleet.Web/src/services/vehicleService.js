@@ -6,5 +6,14 @@ export async function getVehicles() {
     if (!response.ok)
         throw new Error("Erro ao carregar veículos")
 
-    return await response.json
+    return await response.json()
+}
+
+export async function getVehicleById(id) {
+    const response = await fetch(`${API_URL}/${id}`)
+
+    if (!response.ok)
+        throw new Error("Viatura não encontrada")
+
+    return await response.json()
 }

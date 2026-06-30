@@ -15,7 +15,7 @@ function ResultsSummary({ hasActiveFilters, resultCount, onClearFilters }) {
 
                 <button
                     className='btn btn-outline-secondary btn-sm'
-                    onClick={clearFilters}
+                    onClick={onClearFilters}
                 >
                     Limpar filtros
                 </button>
