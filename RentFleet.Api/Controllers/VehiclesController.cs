@@ -44,4 +44,38 @@ public class VehiclesController : ControllerBase
 
         return Ok(vehicles);
     }
+
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetVehicleById(int id)
+    {
+        var vehicle = await _context.Vehicles
+            .Include(v => v.Brand)
+            .Include(v => v.CarModel)
+            .Include(v => v.VehicleCategory)
+            .Include(v => v.FuelType)
+            .Include(v => v.TransmissionType)
+            .Where(v => v.Id == id)
+            .Select(v => new
+            {
+                v.Id,
+                v.LicensePlate,
+                Brand = v.Brand.Name,
+                Model = v.CarModel.Name,
+                Category = v.VehicleCategory.Name,
+                FuelType = v.FuelType.Name,
+                Transmission = v.TransmissionType.Name,
+                v.Year,
+                v.Mileage,
+                v.Horsepower,
+                v.EngineCapacity,
+                v.ImageUrl,
+                v.IsActive
+            })
+            .FirstOrDefaultAsync();
+
+        if (vehicle == null)
+            return NotFound();
+
+        return Ok(vehicle);
+    }
 }
