@@ -1,6 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RentFleet.Api.Data;
+using RentFleet.Api.DTOs;
+using RentFleet.Api.Helpers;
+using RentFleet.Api.Models;
+using RentFleet.Api.Services;
 
 namespace RentFleet.Api.Controllers;
 
@@ -77,5 +81,63 @@ public class VehiclesController : ControllerBase
             return NotFound();
 
         return Ok(vehicle);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> CreateVehicle(CreateVehicleDto dto)
+    {
+        string licensePlate;
+
+        if (dto.GenerateLicensePlate)
+        {
+            var plateGenerator = new PlateGeneratorService();
+            licensePlate = plateGenerator.GenerateUniquePortuguesePlate(_context);
+        }
+        else
+        {
+            if (string.IsNullOrWhiteSpace(dto.LicensePlate))
+            {
+                return BadRequest("A matrícula é obrigatória");
+            }
+
+            licensePlate = LicensePlateHelper.Normalize(dto.LicensePlate);
+
+            if (!LicensePlateHelper.IsValidPortuguesePlate(licensePlate))
+            {
+                return BadRequest("A matrícula deve serguir o formato AA-00-AA.");
+            }
+
+            var plateAlreadyExists = await _context.Vehicles
+                .AnyAsync(v => v.LicensePlate == licensePlate);
+
+            if (plateAlreadyExists)
+            {
+                return BadRequest("Já existe uma viatura com essa matrícula.");
+            }
+        }
+
+        var vehicle = new Vehicle
+        {
+            LicensePlate = licensePlate,
+            BrandId = dto.BrandId,
+            CarModelId = dto.CarModelId,
+            VehicleCategoryId = dto.VehicleCategoryId,
+            FuelTypeId = dto.FuelTypeId,
+            TransmissionTypeId = dto.TransmissionId,
+            Year = dto.Year,
+            Mileage = dto.Mileage,
+            Horsepower = dto.Horsepower,
+            EngineCapacity = dto.EngineCapacity,
+            ImageUrl = dto.ImageUrl,
+            IsActive = true
+        };
+
+        _context.Vehicles.Add(vehicle);
+        await _context.SaveChangesAsync();
+
+        return CreatedAtAction(
+            nameof(GetVehicleById),
+            new { id = vehicle.Id },
+            vehicle);
     }
 }

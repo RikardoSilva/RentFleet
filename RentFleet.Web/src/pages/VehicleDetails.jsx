@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react"
+import './VehicleDetails.css'
 import { useParams, Link } from "react-router-dom"
 import { getVehicleById } from "../services/vehicleService"
+import placeholderCar from '../assets/images/placeholder-car.png'
 
 function VehicleDetails() {
     const { id } = useParams()
@@ -17,7 +19,7 @@ function VehicleDetails() {
     if (error) {
         return (
             <div className="container mt-4">
-                <Link to="/" className="btn btn-outline-secondary mb-4">
+                <Link to="/" className="btn btn-outline-secondary mb-4 vehicle-details-back">
                     ← Voltar
                 </Link>
 
@@ -38,32 +40,83 @@ function VehicleDetails() {
     }
 
     return (
-        <div className='container mt-4'>
-            <Link to="/" className="btn btn-outline-secondary mb-4">
-                ← Voltar
+        <div className="container mt-4 vehicle-details-page">
+
+            <Link to="/" className="btn btn-outline-secondary vehicle-details-back">
+                ← Voltar à frota
             </Link>
 
-            <div className="container mt-4">
-                <div className="card-body">
-                    <h1>
-                        {vehicle.brand} {vehicle.model}
-                    </h1>
+            <div className="vehicle-details-card">
 
-                    <p className="text-muted">
-                        {vehicle.category}
-                    </p>
+                <div className="vehicle-hero">
 
-                    <hr />
+                    <img
+                        src={vehicle.imageURL || placeholderCar}
+                        alt={`${vehicle.brand} ${vehicle.model}`}
+                        className="vehicle-image"
+                        onError={(e) => {
+                            e.currentTarget.src = placeholderCar
+                        }}
+                    />
 
-                    <p><strong>Matrícula:</strong> {vehicle.licensePlate}</p>
-                    <p><strong>Combustível:</strong> {vehicle.fuelType}</p>
-                    <p><strong>Transmissão:</strong> {vehicle.transmission}</p>
-                    <p><strong>Ano:</strong> {vehicle.year}</p>
-                    <p><strong>Quilómetros:</strong> {vehicle.mileage}</p>
-                    <p><strong>Potência:</strong> {vehicle.horsepower} cv</p>
-                    <p><strong>Cilindrada:</strong> {vehicle.engineCapacity}</p>
+                    <div>
+                        <h1 className="vehicle-title">
+                            {vehicle.brand} {vehicle.model}
+                        </h1>
+
+                        <div className="vehicle-badges">
+                            <span className="badge bg-light text-dark border">
+                                {vehicle.category}
+                            </span>
+
+                            <span className="badge bg-dark">
+                                {vehicle.licensePlate}
+                            </span>
+                        </div>
+
+                        <div className="vehicle-status">
+                            ● Disponível
+                        </div>
+                    </div>
+
                 </div>
+
+                <div className="vehicle-specs">
+
+                    <div className="vehicle-spec-card">
+                        <small>Combustível</small>
+                        <h5>{vehicle.fuelType}</h5>
+                    </div>
+
+                    <div className="vehicle-spec-card">
+                        <small>Transmissão</small>
+                        <h5>{vehicle.transmission}</h5>
+                    </div>
+
+                    <div className="vehicle-spec-card">
+                        <small>Ano</small>
+                        <h5>{vehicle.year}</h5>
+                    </div>
+
+                    <div className="vehicle-spec-card">
+                        <small>Quilómetros</small>
+                        <h5>{vehicle.mileage} km</h5>
+                    </div>
+
+                    <div className="vehicle-spec-card">
+                        <small>Potência</small>
+                        <h5>{vehicle.horsepower} cv</h5>
+                    </div>
+
+                    <div className="vehicle-spec-card">
+                        <small>Cilindrada</small>
+                        <h5>{vehicle.engineCapacity} cc</h5>
+                    </div>
+
+                </div>
+
             </div>
+
         </div>
     )
 }

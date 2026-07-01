@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import '../App.css'
 import Navbar from '../components/Navbar'
 import VehicleFilters from '../components/VehicleFilters'
@@ -15,8 +16,8 @@ function Home() {
 
   useEffect(() => {
     getVehicles()
-    .then(data => setVehicles(data))
-    .catch(error => console.error(error))
+      .then(data => setVehicles(data))
+      .catch(error => console.error(error))
   }, [])
 
   const filteredVehicles = vehicles.filter(vehicle => {
@@ -54,6 +55,12 @@ function Home() {
     <>
       <Navbar />
 
+      <div className="container mb-4">
+        <Link to="/vehicles/create" className='btn btn-dark'>
+          + Adicionar viatura
+        </Link>
+      </div>
+
       <VehicleFilters
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
@@ -66,9 +73,9 @@ function Home() {
       />
 
       <ResultsSummary
-      hasActiveFilters={hasActiveFilters}
-      resultCount={filteredVehicles.length}
-      onClearFilters={clearFilters}
+        hasActiveFilters={hasActiveFilters}
+        resultCount={filteredVehicles.length}
+        onClearFilters={clearFilters}
       />
 
       <VehicleList
